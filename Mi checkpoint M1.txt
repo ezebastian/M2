@@ -1,0 +1,203 @@
+# Importante: No modificar ni el nombre ni los argumetos que reciben las funciones, sólo deben escribir
+# código dentro de las funciones ya definidas.
+
+# Recordar utilizar la ruta relativa, no la absoluta para ingestar los datos desde los CSV
+# EJ: 'datasets/xxxxxxxxxx'
+
+import pandas as pd
+import numpy as np
+
+def Ret_Pregunta01():
+    '''
+    Debes utilizar Pandas para ingestar en un objeto Dataframe el contenido del archivo provisto
+    "Fuentes_Consumo_Energia.csv".
+    Esta función debe informar la cantidad de registros cuya entidad sea Argentina retornando ese valor en un dato de tipo entero.
+    Pista averiguar la función Shape
+    '''
+    #Tu código aca:
+    df = pd.read_csv("datasets/Fuentes_Consumo_Energia.csv")
+    Entidad = df.Entity
+    Argentina = len(Entidad[Entidad == "Argentina"])
+    tupla = (Argentina)
+
+    return tupla
+
+
+    #return 'Funcion incompleta'
+
+def Ret_Pregunta02():
+    '''
+    Debes utilizar Pandas para ingestar en un objeto Dataframe el contenido del archivo provisto
+    "Fuentes_Consumo_Energia.csv".
+    Esta función debe eliminar las columnas 'Code' y 'Entity' y luego informar la cantidad de columnas
+    retornando ese valor en un dato de tipo entero.
+    '''
+    #Tu código aca:
+    df = pd.read_csv("datasets/Fuentes_Consumo_Energia.csv")
+    columnas = df.drop(["Entity", "Code"], axis=1).shape
+
+    return columnas[1]
+    
+    #return 'Funcion incompleta'
+
+def Ret_Pregunta03():
+    '''
+    Debes utilizar Pandas para ingestar en un objeto Dataframe el contenido del archivo provisto
+    "Fuentes_Consumo_Energia.csv".
+    Esta función debe informar la cantidad de registros, sin tener en cuenta aquellos con valores faltantes, para el campo 'Code' 
+    y retornando ese valor en un dato de tipo entero.
+    '''
+    #Tu código aca:
+    df = pd.read_csv("datasets/Fuentes_Consumo_Energia.csv")
+    return df.Code.count()
+    
+    #return 'Funcion incompleta'
+
+def Ret_Pregunta04():
+    '''
+    Debes utilizar Pandas para ingestar en un objeto Dataframe el contenido del archivo provisto
+    "Fuentes_Consumo_Energia.csv".
+    El ExaJulio es una unidad diferent al TWh, es decir, no tiene sentido sumarlos o
+    buscar proporciones entre ellos. 
+    La fórmula de conversión es: 277.778 Teravatios/Hora (TWh) = 1 Exajulio
+    Los campos terminados en "_EJ" corresponden a mediciones en Exajulios,
+    y los terminados en "_TWh" corresponden a Teravatios/Hora.
+    La consigna es crear un nuevo campo, que se denomine "Consumo_Total"
+    y que guarde la sumatoria de todos los consumos expresados en Teravatios/Hora
+    (convirtiendo a esta medida los que están en Exajulios).
+    Esta función debe informar el consumo total para la entidad 'World' y año '2019',
+    redondeado a 2 decimales, retornando ese valor en un dato de tipo float.
+    '''
+    #Tu código aca:
+    df = pd.read_csv("datasets/Fuentes_Consumo_Energia.csv")
+    consumos_EJ = df.columns.where(df.columns.str.contains("EJ")).dropna()
+    df[consumos_EJ] = df[consumos_EJ]*277.778
+
+    colum_consum = df.columns.drop(["Entity", "Code", "Year"])
+    df["Consumo_Total"] = df[colum_consum].sum(axis = 1)
+
+    mundo_2019 = df[(df["Year"] == 2019) & (df["Entity"] == "World")]
+
+    return round(float(mundo_2019["Consumo_Total"]), 2)
+
+    #return 'Funcion incompleta'
+
+def Ret_Pregunta05():
+    '''
+    Debes utilizar Pandas para ingestar en un objeto Dataframe el contenido del archivo provisto
+    "Fuentes_Consumo_Energia.csv".
+    Esta función debe informar el año de mayor generación de energía solar (Solar_Generation_TWh)
+    para la entidad 'Europe' retornando ese valor en un dato de tipo entero.
+    '''
+    #Tu código aca:
+    df = pd.read_csv("datasets/Fuentes_Consumo_Energia.csv")
+    Europa = df[df["Entity"] == "Europe"]
+    maximo = Europa.Solar_Generation_TWh.max()
+
+    año = Europa[Europa["Solar_Generation_TWh"] == maximo].Year
+    return int(año)
+
+    #return 'Funcion incompleta'
+
+def Ret_Pregunta06(m1, m2):
+    '''
+    Esta función recibe dos arrays de Numpy, de 2 dimensiones cada uno y devuelve el valor booleano True si es posible realizar una multiplicación entre ambas matrices,
+    y el valor booleano False si no lo es.
+    Ej:
+        n1 = np.array([[0,0,0],[1,1,1],[2,2,2]])
+        n2 = np.array([[3,3],[4,4],[5,5]])
+        print(Ret_Pregunta06(n1,n2))
+            True            -> Valor devuelto por la función en este ejemplo
+        print(Ret_Pregunta06(n2,n1))
+            False            -> Valor devuelto por la función en este ejemplo
+    '''
+    #Tu código aca:
+    if m1.shape[1] == m2.shape[0]:
+        return True
+    else:
+        return False
+    
+    #return 'Funcion incompleta'
+
+def Ret_Pregunta07():
+    '''
+    Debes utilizar Pandas para ingestar en un objeto Dataframe el contenido del archivo provisto
+    "Fuentes_Consumo_Energia.csv".
+    Esta función debe informar cuál de la siguiente lista de países tuvo mayor generación de
+    energía solar (Solar_Generation_TWh) en el año 2019:
+        * Argentina
+        * Brazil
+        * Chile
+        * Colombia
+        * Ecuador
+        * Mexico
+        * Peru
+    Debe retornar el valor en un dato de tipo string.
+    '''
+    #Tu código aca:
+    df = pd.read_csv("datasets/Fuentes_Consumo_Energia.csv")
+    paises = ['Argentina','Brazil','Chile','Colombia','Ecuador','Mexico','Peru']
+    indice = df[(df['Entity'].isin(paises)) & (df['Year'] == 2019)].Solar_Generation_TWh.idxmax()
+    return df['Entity'][indice]
+    
+    #return 'Funcion incompleta'
+
+def Ret_Pregunta08():
+    '''
+    Debes utilizar Pandas para ingestar en un objeto Dataframe el contenido del archivo provisto
+    "Fuentes_Consumo_Energia.csv".
+    Esta función debe informar la cantidad de entidades diferentes que están presentes en el dataset, retornando ese valor en un dato de tipo entero.
+    '''
+    #Tu código aca:
+    df = pd.read_csv("datasets/Fuentes_Consumo_Energia.csv")
+    return len(df['Entity'].unique())
+    
+    #return 'Funcion incompleta'
+
+def Ret_Pregunta09():
+    '''
+    Debes utilizar Pandas para ingestar en un objeto Dataframe el contenido del archivo provisto
+    "datasets/Tabla1_ejercicio.csv" y "datasets/Tabla2_ejercicio.csv".
+    Esta función debe retornar: score_promedio_femenino y score_promedio_masculino en formato tupla, teniendo en cuenta que no debe haber registros repetidos.
+    '''
+    #Tu código aca:
+    df1 = pd.read_csv("datasets/Tabla1_ejercicio.csv", sep = ";")
+    df2 = pd.read_csv("datasets/Tabla2_ejercicio.csv", sep = ";")
+    df = pd.merge(df1, df2, on = ["pers_id"])
+
+    df.drop_duplicates(inplace = True)
+    df.dropna(inplace = True)
+
+    score_promedio_masculino = df[df["sexo"] == "M"]["score"].mean()
+    score_promedio_femenino = df[df["sexo"] == "F"]["score"].mean()
+
+    tupla = (round(score_promedio_femenino, 2), round(score_promedio_masculino, 2))
+    return tupla
+
+    #return 'Funcion incompleta'
+
+
+def Ret_Pregunta10(lista):
+    '''
+    Esta función recibe como parámetro un objeto de la clase Lista() definida en el archivo Lista.py. Debe recorrer la lista y retornan la cantidad de nodos que posee. Utilizar el método de la clase
+    Lista llamado getCabecera()
+    Ejemplo:
+        lis = Lista()
+        lista.agregarElemento(1)
+        lista.agregarElemento(2)
+        lista.agregarElemento(3)
+        print(Ret_Pregunta10(lista))
+            3    -> Debe ser el valor devuelto por la función Ret_Pregunta10() en este ejemplo
+    '''
+    #Tu código aca:
+    c = 0
+    a = lista.getCabecera()
+    if a:
+        c = 1
+    while a.getSiguiente():
+        c += 1
+        a = a.getSiguiente()
+    
+    return c
+    
+    #return 'Funcion incompleta'
