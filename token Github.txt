@@ -1,3 +1,0 @@
--gitHub
-Nombre del primer token: NewToken
-token de acceso: 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
